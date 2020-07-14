@@ -5,4 +5,4 @@
 模仿示例当中的Layers功能。
 
 ### 1、渐变动画效果图
-![截图](Layers\Layers.png)
+![截图](Layers/Layers.png)
