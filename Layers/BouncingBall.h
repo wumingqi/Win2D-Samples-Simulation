@@ -3,6 +3,14 @@
 #include <d2d1_3.h>
 #include <string>
 
+enum class FADE_MODE : DWORD
+{
+	LAYER,
+	PER_PRIMITIVE,
+	OPACITY_BRUSH,
+	//CLIP_GEOMETRY
+};
+
 struct BouncingBall
 {
 	std::wstring Text;			// нд╠╬

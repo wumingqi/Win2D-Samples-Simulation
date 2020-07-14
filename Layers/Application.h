@@ -32,11 +32,15 @@ class Application
 	Microsoft::WRL::ComPtr<ID2D1DeviceContext>				m_d2dContext;
 	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>			m_brush;
 	Microsoft::WRL::ComPtr<ID2D1Bitmap>						m_bitmap;
+	Microsoft::WRL::ComPtr<ID2D1RadialGradientBrush>		m_gradientBrush;
 
 	Microsoft::WRL::ComPtr<IDWriteTextFormat3>				m_format;
 
 	void InitializeResources();
 	void Update();
+
+	void DrawPerPrimitive();
+	void DrawOpacityBrush();
 
 	std::vector<BouncingBall>								m_balls;
 	HANDLE													m_lock;
@@ -46,14 +50,15 @@ class Application
 	static DWORD __stdcall RenderThread(LPVOID param);
 	bool m_CanRender;
 	HANDLE m_RenderFanished;
-
+	FADE_MODE m_fadeMode;			// ¶¯»­Ä£Ê½
 public:
 	Application(UINT width, UINT height, HINSTANCE hInstance) :
 		m_hWnd(nullptr),
 		m_width(width),
 		m_height(height),
 		m_hInstance(hInstance),
-		m_CanRender(true)
+		m_CanRender(true),
+		m_fadeMode(FADE_MODE::PER_PRIMITIVE)
 	{
 	}
 

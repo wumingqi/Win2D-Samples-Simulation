@@ -27,6 +27,20 @@ void Application::InitializeResources()
 		{L"Nine",	D2D1::ColorF::Brown},
 	};
 
+	D2D1_GRADIENT_STOP stops[] = {
+		{0, D2D1::ColorF(D2D1::ColorF::White)},
+		{0.25f, D2D1::ColorF(D2D1::ColorF::White)},
+		{1.0f, D2D1::ColorF(0, 0)},
+	};
+
+	ComPtr<ID2D1GradientStopCollection> stopCollection;
+	m_d2dContext->CreateGradientStopCollection(stops, _countof(stops), &stopCollection);
+
+	m_d2dContext->CreateRadialGradientBrush(
+		D2D1::RadialGradientBrushProperties({}, {}, 0,0), 
+		stopCollection.Get(), 
+		&m_gradientBrush);
+
 	CreateThread(nullptr, 0, RenderThread, this, 0, 0);
 }
 
@@ -36,6 +50,22 @@ void Application::Update()
 	m_d2dContext->Clear(ColorF(D2D1::ColorF::CornflowerBlue));
 	//¿ªÊ¼»æÖÆ
 
+	switch (m_fadeMode)
+	{
+	case FADE_MODE::PER_PRIMITIVE:
+		DrawPerPrimitive();
+		break;
+	case FADE_MODE::OPACITY_BRUSH:
+		DrawOpacityBrush();
+		break;
+	}
+
+	m_d2dContext->EndDraw();
+	m_deviceResources.GetSwapChain()->Present(1, 0);
+}
+
+void Application::DrawPerPrimitive()
+{
 	for (auto& ball : m_balls)
 	{
 		ball.Update({ (float)m_width, (float)m_height });
@@ -65,9 +95,19 @@ void Application::Update()
 		D2D1_POINT_2F origin = { ball.Position.x - ball.Radius, ball.Position.y - ball.Radius };
 		m_d2dContext->DrawTextLayout(origin, CreateText(ball.Text, ball.Radius * 2, ball.Radius * 2).Get(), m_brush.Get());
 	}
+}
 
-	m_d2dContext->EndDraw();
-	m_deviceResources.GetSwapChain()->Present(1, 0);
+void Application::DrawOpacityBrush()
+{
+	for (auto& ball : m_balls)
+	{
+		ball.Update({ (float)m_width, (float)m_height });
+		m_gradientBrush->SetCenter({ ball.Position.x, ball.Position.y });
+		m_gradientBrush->SetRadiusX(ball.Radius);
+		m_gradientBrush->SetRadiusY(ball.Radius);
+
+		m_d2dContext->FillEllipse(D2D1::Ellipse({ ball.Position.x,ball.Position.y }, ball.Radius, ball.Radius), m_gradientBrush.Get());
+	}
 }
 
 ComPtr<IDWriteTextLayout> Application::CreateText(const std::wstring text, float width, float height)
