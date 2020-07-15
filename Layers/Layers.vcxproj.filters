@@ -54,5 +54,11 @@
     <Image Include="Layers.png">
       <Filter>资源文件</Filter>
     </Image>
+    <Image Include="..\..\..\Users\吴明启\Pictures\OpacityBrush.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="..\..\..\Users\吴明启\Pictures\PerPrimitive.png">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
 </Project>
