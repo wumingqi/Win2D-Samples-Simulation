@@ -112,6 +112,22 @@ LRESULT Application::Handle_WM_SIZE(WPARAM wParam, LPARAM lParam)
 ///<param name="lParam">其他信息</param>
 LRESULT Application::Handle_WM_KEYDOWN(WPARAM wParam, LPARAM lParam)
 {
+	int value = (int)m_layerMode;
+	if (wParam == VK_UP)
+	{
+		value++;
+	}
+	
+	if (wParam == VK_DOWN)
+	{
+		value--;
+		if (value == -1)
+		{
+			value = 3;
+		}
+	}
+
+	m_layerMode = LAYER_MODE(value % 4);
 	return 0;
 }
 

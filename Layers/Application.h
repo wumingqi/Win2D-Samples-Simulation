@@ -33,6 +33,7 @@ class Application
 	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>			m_brush;
 	Microsoft::WRL::ComPtr<ID2D1Bitmap>						m_bitmap;
 	Microsoft::WRL::ComPtr<ID2D1RadialGradientBrush>		m_gradientBrush;
+	Microsoft::WRL::ComPtr<ID2D1RectangleGeometry>			m_geometry;
 
 	Microsoft::WRL::ComPtr<IDWriteTextFormat3>				m_format;
 
@@ -45,12 +46,15 @@ class Application
 	std::vector<BouncingBall>								m_balls;
 	HANDLE													m_lock;
 
-	ComPtr<IDWriteTextLayout> CreateText(const std::wstring text, float width, float height);
+	Microsoft::WRL::ComPtr<IDWriteTextLayout> CreateText(const std::wstring text, float width, float height);
 
 	static DWORD __stdcall RenderThread(LPVOID param);
 	bool m_CanRender;
 	HANDLE m_RenderFanished;
-	FADE_MODE m_fadeMode;			// ¶¯»­Ä£Ê½
+	LAYER_MODE m_layerMode;
+	ComPtr<ID2D1Layer> m_layer;
+
+	void DrawBall(const BouncingBall& ball, float alpha = 1.0f);
 public:
 	Application(UINT width, UINT height, HINSTANCE hInstance) :
 		m_hWnd(nullptr),
@@ -58,7 +62,9 @@ public:
 		m_height(height),
 		m_hInstance(hInstance),
 		m_CanRender(true),
-		m_fadeMode(FADE_MODE::PER_PRIMITIVE)
+		m_lock(nullptr),
+		m_RenderFanished(nullptr),
+		m_layerMode(LAYER_MODE::PER_PRIMITIVE_FADE)
 	{
 	}
 

@@ -3,31 +3,32 @@
 #include <d2d1_3.h>
 #include <string>
 
-enum class FADE_MODE : DWORD
+enum class LAYER_MODE : DWORD
 {
-	LAYER,
-	PER_PRIMITIVE,
+	LAYER_FADE,
+	PER_PRIMITIVE_FADE,
 	OPACITY_BRUSH,
-	//CLIP_GEOMETRY
+	CLIP_GEOMETRY
 };
 
 struct BouncingBall
 {
-	std::wstring Text;			// 文本
-	D2D1_COLOR_F Color;			// 颜色
-	D2D1_VECTOR_2F Velocity;	// 移动速度
-	D2D1_VECTOR_2F Position;	// 当前位置
-	FLOAT Radius;				// 半径
-	UINT Fade;
-	FLOAT FadeSpeed;
-	bool IsInc;
+	std::wstring			Text;									// 文本
+	D2D1_COLOR_F			Color;									// 颜色
+	D2D1_VECTOR_2F			Velocity;								// 移动速度
+	D2D1_VECTOR_2F			Position;								// 当前位置
+	FLOAT					Radius;									// 半径
+	FLOAT					FadeSpeed;
+	FLOAT					FadeAge;
+
 	BouncingBall(const std::wstring text, const UINT color) :
 		Text(text),
 		Color(D2D1::ColorF(color)),
 		Velocity{},
 		Position{},
 		Radius(0),
-		IsInc(false)
+		FadeSpeed(0),
+		FadeAge(0)
 	{
 		Velocity = D2D1::Vector2F(RandomBetween(-2, 2), RandomBetween(-2, 2));
 		Radius = RandomBetween(25, 100);
@@ -42,43 +43,38 @@ struct BouncingBall
 		Position.x += Velocity.x;
 		Position.y += Velocity.y;
 
-		FLOAT bounceX = (Position.x < Radius || Position.x>(controlSize.width - Radius)) ? -1.0f : 1.0f;
-		FLOAT bounceY = (Position.y < Radius || Position.y>(controlSize.height - Radius)) ? -1.0f : 1.0f;
+		D2D1_VECTOR_2F topLeft = { Radius, Radius };
+		D2D1_VECTOR_2F bottomRight = { controlSize.width - Radius, controlSize.height - Radius };
+
+		float bounceX = (Position.x < topLeft.x || Position.x > bottomRight.x) ? -1 : 1;
+		float bounceY = (Position.y < topLeft.y || Position.y > bottomRight.y) ? -1 : 1;
 
 		Velocity.x *= bounceX;
 		Velocity.y *= bounceY;
 
-		if (IsInc)
-		{
-			Color.a += FadeSpeed;
-			if (Color.a >= 1.0)
-			{
-				IsInc = false;
-			}
-		}
-		else
-		{
-			Color.a -= FadeSpeed;
-			if (Color.a <= 0)
-			{
-				IsInc = true;
-			}
-		}
+		// Position = Vector2.Clamp(Position, topLeft, bottomRight);
 
-		if (Position.x < 0)
-			Position.x = Radius;
-		if (Position.y < 0)
-			Position.y = Radius;
+		if (Position.x < topLeft.x) Position.x = topLeft.x;
+		if (Position.y < topLeft.y) Position.y = topLeft.y;
+		if (Position.x > bottomRight.x) Position.x = bottomRight.x;
+		if (Position.y > bottomRight.y) Position.y = bottomRight.y;
 
-		if (controlSize.width < Position.x + Radius)
-			Position.x = controlSize.width - Radius;
-
-		if (controlSize.height < Position.y + Radius)
-			Position.y = controlSize.height - Radius;
+		FadeAge += FadeSpeed;
 	}
 
 	static float RandomBetween(float min, float max)
 	{
 		return rand() % 1000 / 1000.0f * (max - min) + min;
 	}
+
+	FLOAT GetFadeAlpha() const
+	{
+		float alpha = FadeAge - (int)FadeAge;
+
+		if ((int)FadeAge % 2 != 0)
+			alpha = 1.0f - alpha;
+
+		return alpha;
+	}
+
 };
