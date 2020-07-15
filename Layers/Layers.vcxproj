@@ -174,9 +174,9 @@
     <ClInclude Include="Pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\Users\吴明启\Pictures\OpacityBrush.png" />
-    <Image Include="..\..\..\Users\吴明启\Pictures\PerPrimitive.png" />
     <Image Include="Layers.png" />
+    <Image Include="OpacityBrush.png" />
+    <Image Include="PerPrimitive.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

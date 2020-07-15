@@ -54,10 +54,10 @@
     <Image Include="Layers.png">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="..\..\..\Users\吴明启\Pictures\OpacityBrush.png">
+    <Image Include="OpacityBrush.png">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="..\..\..\Users\吴明启\Pictures\PerPrimitive.png">
+    <Image Include="PerPrimitive.png">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>
